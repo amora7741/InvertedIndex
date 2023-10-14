@@ -10,12 +10,31 @@
 # standard arrays
 
 #importing some Python libraries
-# --> add your Python code here
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 def connectDataBase():
+    DB_NAME = "corpus"
+    DB_USER = "postgres"
+    DB_PASS = "123"
+    DB_HOST = "localhost"
+    DB_PORT = "5432"
 
-    # Create a database connection object using psycopg2
-    # --> add your Python code here
+    try:
+        conn = psycopg2.connect(
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASS,
+            host=DB_HOST,
+            port=DB_PORT,
+            cursor_factory=RealDictCursor
+        )
+
+        return conn
+    
+    except:
+        print("Database not connected successfully!")
+
 
 def createCategory(cur, cur, catId, catName):
 
