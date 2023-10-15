@@ -127,12 +127,11 @@ def deleteDocument(cur, docId):
     cur.execute(query, recset)
 
 def updateDocument(cur, docId, docText, docTitle, docDate, docCat):
-
     # 1 Delete the document
-    # --> add your Python code here
+    deleteDocument(cur, docId)
 
     # 2 Create the document with the same id
-    # --> add your Python code here
+    createDocument(cur, docId, docText, docTitle, docDate, docCat)
 
 def getIndex(cur):
 
