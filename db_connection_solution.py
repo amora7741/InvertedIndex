@@ -1,17 +1,18 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # AUTHOR: your name
 # FILENAME: title of the source file
 # SPECIFICATION: description of the program
 # FOR: CS 4250- Assignment #1
 # TIME SPENT: how long it took you to complete the assignment
-#-----------------------------------------------------------*/
+# -----------------------------------------------------------*/
 
-#IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with
+# IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with
 # standard arrays
 
-#importing some Python libraries
+# importing some Python libraries
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
 
 def connectDataBase():
     DB_NAME = "corpus"
@@ -27,11 +28,11 @@ def connectDataBase():
             password=DB_PASS,
             host=DB_HOST,
             port=DB_PORT,
-            cursor_factory=RealDictCursor
+            cursor_factory=RealDictCursor,
         )
 
         return conn
-    
+
     except:
         print("Database not connected successfully!")
 
@@ -45,15 +46,16 @@ def createCategory(cur, catId, catName):
     except Exception as e:
         print(f"Error creating category: {e}")
 
+
 def createDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 1 Get the category id based on the informed category name
     query = "SELECT category_id FROM Categories WHERE name = %s"
     recset = [docCat]
     cur.execute(query, recset)
-    cat_id = cur.fetchone()['category_id']
-    
+    cat_id = cur.fetchone()["category_id"]
+
     # 2 Insert the document in the database. For num_chars, discard the spaces and punctuation marks.
-    numChars = len(''.join(filter(str.isalnum, docText)))
+    numChars = len("".join(filter(str.isalnum, docText)))
     query = "INSERT INTO Documents (doc_number, text, title, date, num_chars, category_id) VALUES (%s, %s, %s, %s, %s, %s)"
     recset = [docId, docText, docTitle, docDate, numChars, cat_id]
     cur.execute(query, recset)
@@ -64,7 +66,7 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
     # delimiter character for terms and Remember to lowercase terms and remove
     # punctuation marks.
     filteredChars = filter(lambda x: x.isalnum() or x.isspace(), docText)
-    cleanedString = ''.join(filteredChars)
+    cleanedString = "".join(filteredChars)
     lowercaseString = cleanedString.lower()
     terms = lowercaseString.split()
 
@@ -91,7 +93,7 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
         result = cur.fetchone()
 
         if result:
-            newCount = result['count'] + count
+            newCount = result["count"] + count
             query = "UPDATE Index SET count = %s WHERE doc_number = %s AND term = %s"
             recset = [newCount, docId, term]
             cur.execute(query, recset)
@@ -100,19 +102,20 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
             recset = [docId, term, count]
             cur.execute(query, recset)
 
+
 def deleteDocument(cur, docId):
     # 1 Query the index based on the document to identify terms
     query = "SELECT term FROM Index WHERE doc_number = %s"
     recset = [docId]
     cur.execute(query, recset)
-    terms = [item['term'] for item in cur.fetchall()]
+    terms = [item["term"] for item in cur.fetchall()]
 
     for term in terms:
         # 1.1 For each term identified, delete its occurrences in the index for that document
         query = "DELETE FROM Index WHERE doc_number = %s AND term = %s"
         recset = [docId, term]
         cur.execute(query, recset)
-        
+
         # 1.2 Check if there are no more occurrences of the term in another document. If this happens, delete the term from the database.
         query = "SELECT * FROM Index WHERE term = %s"
         recset = [term]
@@ -126,6 +129,7 @@ def deleteDocument(cur, docId):
     recset = [docId]
     cur.execute(query, recset)
 
+
 def updateDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 1 Delete the document
     deleteDocument(cur, docId)
@@ -133,9 +137,32 @@ def updateDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 2 Create the document with the same id
     createDocument(cur, docId, docText, docTitle, docDate, docCat)
 
-def getIndex(cur):
 
-    # Query the database to return the documents where each term occurs with their corresponding count. Output example:
+def getIndex(cur):
+    # Query the database to return the documents where each term occurs with their
+    # corresponding count. Output example:
     # {'baseball':'Exercise:1','summer':'Exercise:1,California:1,Arizona:1','months':'Exercise:1,Discovery:3'}
-    # ...
-    # --> add your Python code here
+
+    output = {}
+
+    query = """
+        SELECT i.term, d.title, i.count 
+        FROM Index i 
+        JOIN Documents d ON i.doc_number = d.doc_number
+    """
+    cur.execute(query)
+    results = cur.fetchall()
+
+    for row in results:
+        term = row["term"]
+        title = row["title"]
+        count = row["count"]
+
+        titleCountPair = f"{title}:{count}"
+
+        if term in output:
+            output[term] += ", " + titleCountPair
+        else:
+            output[term] = titleCountPair
+
+    return output
