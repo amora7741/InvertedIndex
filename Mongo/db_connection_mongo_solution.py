@@ -22,16 +22,16 @@ def connectDataBase():
 
 def createDocument(col, docId, docText, docTitle, docDate, docCat):
     # create a dictionary to count how many times each term appears in the document.
-    terms_count = {}
+    termsCount = {}
     for term in docText.lower().split(" "):
-        cleaned_term = ''.join(char for char in term if char.isalnum())
-        if cleaned_term in terms_count:
-            terms_count[cleaned_term] += 1
+        cleanedTerm = ''.join(char for char in term if char.isalnum())
+        if cleanedTerm in termsCount:
+            termsCount[cleanedTerm] += 1
         else:
-            terms_count[cleaned_term] = 1
+            termsCount[cleanedTerm] = 1
 
     # create a list of dictionaries to include term objects.
-    terms_list = [{"term": term, "num_chars": len(term), "count": terms_count[term]} for term in terms_count]
+    termsList = [{"term": term, "num_chars": len(term), "count": termsCount[term]} for term in termsCount]
 
     docDate = datetime.strptime(docDate, '%Y-%m-%d')
 
@@ -43,24 +43,22 @@ def createDocument(col, docId, docText, docTitle, docDate, docCat):
         "num_chars": sum(1 for char in docText if char.isalnum()),  # Count only alphanumeric characters
         "date": docDate,
         "category": {"name": docCat},
-        "terms": terms_list
+        "terms": termsList
     }
 
     # Insert the document
     col.insert_one(document)
 
 def deleteDocument(col, docId):
-
     # Delete the document from the database
-    # --> add your Python code here
+    col.delete_one({"_id": docId})
 
 def updateDocument(col, docId, docText, docTitle, docDate, docCat):
-
     # Delete the document
-    # --> add your Python code here
+    deleteDocument(col, docId)
 
     # Create the document with the same id
-    # --> add your Python code here
+    createDocument(col, docId, docText, docTitle, docDate, docCat)
 
 def getIndex(col):
 
