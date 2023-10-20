@@ -10,12 +10,15 @@
 # standard arrays
 
 #importing some Python libraries
-# --> add your Python code here
+from pymongo import MongoClient
+from datetime import datetime
 
 def connectDataBase():
 
     # Create a database connection object using pymongo
-    # --> add your Python code here
+    client = MongoClient('localhost', 27017)
+    db = client['corpus']
+    return db
 
 def createDocument(col, docId, docText, docTitle, docDate, docCat):
 
