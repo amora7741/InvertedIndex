@@ -21,19 +21,33 @@ def connectDataBase():
     return db
 
 def createDocument(col, docId, docText, docTitle, docDate, docCat):
-
     # create a dictionary to count how many times each term appears in the document.
-    # Use space " " as the delimiter character for terms and remember to lowercase them.
-    # --> add your Python code here
+    terms_count = {}
+    for term in docText.lower().split(" "):
+        cleaned_term = ''.join(char for char in term if char.isalnum())
+        if cleaned_term in terms_count:
+            terms_count[cleaned_term] += 1
+        else:
+            terms_count[cleaned_term] = 1
 
     # create a list of dictionaries to include term objects.
-    # --> add your Python code here
+    terms_list = [{"term": term, "num_chars": len(term), "count": terms_count[term]} for term in terms_count]
 
-    #Producing a final document as a dictionary including all the required document fields
-    # --> add your Python code here
+    docDate = datetime.strptime(docDate, '%Y-%m-%d')
+
+    # Producing a final document as a dictionary including all the required document fields
+    document = {
+        "_id": docId,
+        "title": docTitle,
+        "text": docText,
+        "num_chars": sum(1 for char in docText if char.isalnum()),  # Count only alphanumeric characters
+        "date": docDate,
+        "category": {"name": docCat},
+        "terms": terms_list
+    }
 
     # Insert the document
-    # --> add your Python code here
+    col.insert_one(document)
 
 def deleteDocument(col, docId):
 
