@@ -25,6 +25,7 @@ def createDocument(col, docId, docText, docTitle, docDate, docCat):
     termsCount = {}
     for term in docText.lower().split(" "):
         cleanedTerm = ''.join(char for char in term if char.isalnum())
+        
         if cleanedTerm in termsCount:
             termsCount[cleanedTerm] += 1
         else:
@@ -61,8 +62,17 @@ def updateDocument(col, docId, docText, docTitle, docDate, docCat):
     createDocument(col, docId, docText, docTitle, docDate, docCat)
 
 def getIndex(col):
+    # Query the database to return the documents where each term occurs with their corresponding count.
+    output = {}
 
-    # Query the database to return the documents where each term occurs with their corresponding count. Output example:
-    # {'baseball':'Exercise:1','summer':'Exercise:1,California:1,Arizona:1','months':'Exercise:1,Discovery:3'}
-    # ...
-    # --> add your Python code here
+    documents = col.find({})
+    for document in documents:
+        for termObj in document["terms"]:
+            term = termObj["term"]
+
+            if term in output:
+                output[term] += f",{document['title']}:{termObj['count']}"
+            else:
+                output[term] = f"{document['title']}:{termObj['count']}"
+
+    return output
