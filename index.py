@@ -1,9 +1,9 @@
 #-------------------------------------------------------------------------
-# AUTHOR: your name
-# FILENAME: title of the source file
-# SPECIFICATION: description of the program
+# AUTHOR: Alejandro Mora-Lopez
+# FILENAME: index
+# SPECIFICATION: This program allows the user to communicate with a PostgreSQL database, allowing them to create documents.
 # FOR: CS 4250- Assignment #2
-# TIME SPENT: how long it took you to complete the assignment
+# TIME SPENT: 5 Hours Total
 #-----------------------------------------------------------*/
 
 #importing some Python libraries

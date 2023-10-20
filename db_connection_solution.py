@@ -1,10 +1,10 @@
-# -------------------------------------------------------------------------
-# AUTHOR: your name
-# FILENAME: title of the source file
-# SPECIFICATION: description of the program
-# FOR: CS 4250- Assignment #1
-# TIME SPENT: how long it took you to complete the assignment
-# -----------------------------------------------------------*/
+#-------------------------------------------------------------------------
+# AUTHOR: Alejandro Mora-Lopez
+# FILENAME: db_connection_solution
+# SPECIFICATION: This program simulates an inverted index in PostgreSQL/PgAdmin.
+# FOR: CS 4250- Assignment #2
+# TIME SPENT: 5 Hours Total
+#-----------------------------------------------------------*/
 
 # IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with
 # standard arrays
