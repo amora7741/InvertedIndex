@@ -52,11 +52,11 @@ def createDocument(col, docId, docText, docTitle, docDate, docCat):
 
 def deleteDocument(col, docId):
     # Delete the document from the database
-    col.delete_one({"_id": docId})
+    col.delete_one({"_id": int(docId)})
 
 def updateDocument(col, docId, docText, docTitle, docDate, docCat):
     # Delete the document
-    deleteDocument(col, docId)
+    deleteDocument(col, int(docId))
 
     # Create the document with the same id
     createDocument(col, docId, docText, docTitle, docDate, docCat)
