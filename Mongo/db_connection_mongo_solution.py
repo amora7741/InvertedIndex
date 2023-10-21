@@ -38,7 +38,7 @@ def createDocument(col, docId, docText, docTitle, docDate, docCat):
 
     # Producing a final document as a dictionary including all the required document fields
     document = {
-        "_id": docId,
+        "_id": int(docId),
         "title": docTitle,
         "text": docText,
         "num_chars": sum(1 for char in docText if char.isalnum()),  # Count only alphanumeric characters
